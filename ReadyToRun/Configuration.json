@@ -1,0 +1,14 @@
+{
+  "$types": {
+    "ABSButler.JSONConfig, ABSButler, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "1"
+  },
+  "$type": "1",
+  "EmailAlerts": "meaningoflights@gmail.com",
+  "FromEmail": "meaningoflights@gmail.com",
+  "SMTPHost": "smtp.gmail.com",
+  "SMTPDomain": "",
+  "SMTPPassword": "",
+  "SMTPPort": 25,
+  "SMTPTLSEnabled": false,
+  "MaxMonthsToLookBack": "11"
+}
