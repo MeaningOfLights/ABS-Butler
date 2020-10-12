@@ -18,7 +18,14 @@ namespace ABSButler
 
         private List<string> RunSheetFailures = new List<string>();
         private JSONConfig jsonConfigObj = null;
-        public DownloadHelper(JSONConfig jsonConfigObj)
+        
+        
+       
+        private string DEBUGUserPID = "EmployeeID";
+        private string DEBUGPassword = "DEVPASSWORD";
+        private string DEBUGDomain = "DEV";
+
+        public DownloadHelper()
         {
             this.jsonConfigObj = jsonConfigObj;
         }
@@ -210,6 +217,13 @@ namespace ABSButler
         {
             try
             {
+            //For strict environments, typically Corp Netrworks you need to set the creds (if working in a dev environment) AND User Agent again
+#if DEBUG
+            wc.Credentials = new NetworkCredential(DEBUGUserPID, DEBUGPassword, DEBUGDomain);
+#endif 
+            wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+            wc.Headers.Add("Accept-Charset", "ISO-8859-1");
+        
                 return wc.DownloadData(url);
             }
             catch (WebException webEx)
@@ -339,22 +353,20 @@ namespace ABSButler
                     if (hasAllKeywordsInURL)
                     {
                         fileURL = i.Href;
-                        if (!fileURL.StartsWith("http://abs.gov.au")) fileURL = "http://abs.gov.au" + fileURL;
 
                         //Sometimes this URL gets blocked: "http://www.ausstats.abs.gov.au/ausstats/ABS@Archive.nsf/0/99BB5EE4DB2659B2CA257FE10013B04B/$File/5232012.xls"
                         //So I've added exception handling at the file level - not the page level
                         try
                         {
+                           //For strict environments, typically Corp Netrworks you need to set the creds (if working in a dev environment) AND User Agent again
+#if DEBUG
+                            wc.Credentials = new NetworkCredential(DEBUGUserPID, DEBUGPassword, DEBUGDomain);
+#endif 
+                            wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+                            wc.Headers.Add("Accept-Charset", "ISO-8859-1");
+        
                             var downloadFileByteArray = wc.DownloadData(fileURL);
-
-                            //JT - I dont have the time, but I need to get this to work - its not dead code!
-                            ////Doh! ABS's Content-Disposition doesn't work because the ABS dont add the HTML Meta Data to the file downloads properly - hopefully they do in the future!!
-                            ////Try to extract the filename from the Content-Disposition header
-                            //if (!String.IsNullOrEmpty(wc.ResponseHeaders["Content-Disposition"]))
-                            //{
-                            //    fileName = wc.ResponseHeaders["Content-Disposition"].Substring(wc.ResponseHeaders["Content-Disposition"].IndexOf("filename=") + 10).Replace("\"", "");
-                            //}
-
+                            
                             //Resort to naming the file based on the KeyWords found in the link
                             fileName = GetFileNameFromUrl(fileURL, keywordsInUrl, destination);
                              
